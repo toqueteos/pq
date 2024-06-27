@@ -19,10 +19,11 @@ var typeSQLScanner = reflect.TypeOf((*sql.Scanner)(nil)).Elem()
 // slice of any dimension.
 //
 // For example:
-//  db.Query(`SELECT * FROM t WHERE id = ANY($1)`, pq.Array([]int{235, 401}))
 //
-//  var x []sql.NullInt64
-//  db.QueryRow(`SELECT ARRAY[235, 401]`).Scan(pq.Array(&x))
+//	db.Query(`SELECT * FROM t WHERE id = ANY($1)`, pq.Array([]int{235, 401}))
+//
+//	var x []sql.NullInt64
+//	db.QueryRow(`SELECT ARRAY[235, 401]`).Scan(pq.Array(&x))
 //
 // Scanning multi-dimensional arrays is not supported.  Arrays where the lower
 // bound is not one (such as `[0:0]={1}') are not supported.
@@ -60,9 +61,26 @@ func Array(a interface{}) interface {
 		return (*StringArray)(a)
 	case *[][]byte:
 		return (*ByteaArray)(a)
+
+	case *BoolArray:
+		return a
+	case *Float64Array:
+		return a
+	case *Float32Array:
+		return a
+	case *Int64Array:
+		return a
+	case *Int32Array:
+		return a
+	case *StringArray:
+		return a
+	case *ByteaArray:
+		return a
+	case *GenericArray:
+		return a
 	}
 
-	return GenericArray{a}
+	return GenericArray{A: a}
 }
 
 // ArrayDelimiter may be optionally implemented by driver.Valuer or sql.Scanner
